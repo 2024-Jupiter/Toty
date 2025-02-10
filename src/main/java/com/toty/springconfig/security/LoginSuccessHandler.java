@@ -10,16 +10,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.savedrequest.CookieRequestCache;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     
     private final JwtTokenUtil jwtTokenUtil;
 
-    public FormLoginSuccessHandler(JwtTokenUtil jwtTokenUtil) {
-        setRequestCache(new CookieRequestCache());
+    public LoginSuccessHandler(JwtTokenUtil jwtTokenUtil) {
+//        setRequestCache(new CookieRequestCache());
         setDefaultTargetUrl("/api/users/login-success");
         this.jwtTokenUtil = jwtTokenUtil;
     }
@@ -27,7 +26,7 @@ public class FormLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws ServletException, IOException {
-
+        System.out.println("인증 성공");
         // 새로 발급하고 response에 넣는 과정
         String accessToken = jwtTokenUtil.generateToken(authentication.getName(), ACCESS_TOKEN_TTL);
         String refreshToken = jwtTokenUtil.generateToken(authentication.getName(), REFRESH_TOKEN_TTL);

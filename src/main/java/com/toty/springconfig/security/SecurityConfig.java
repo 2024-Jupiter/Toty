@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.security.web.savedrequest.CookieRequestCache;
 
 @RequiredArgsConstructor
 @Configuration
@@ -30,10 +29,10 @@ public class SecurityConfig {
 //    @Autowired
 //    private MyOAuth2UserService myOAuth2UserService;
 
-    private final SavedRequestAwareAuthenticationSuccessHandler formloginsuccess;
+    private final SavedRequestAwareAuthenticationSuccessHandler loginsuccess;
     private final JwtRequestFilter jwtRequestFilter;
     private final AccessTokenValidationFilter accessTokenValidationFilter;
-    private final CookieRequestCache cookieRequestCache;
+//    private final CookieRequestCache cookieRequestCache;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,7 +52,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/api/users/sign-in")  // post 엔드포인트
                         .usernameParameter("email")
                         .passwordParameter("pwd")
-                        .successHandler(formloginsuccess)
+                        .successHandler(loginsuccess)
                         .failureHandler(loginFailureHandler())
                         .permitAll()
                 )
@@ -70,12 +69,13 @@ public class SecurityConfig {
 //                        .successHandler(authSuccessHandler)
 //                        .failureHandler(failureHandler)
 //                )
+//                .securityContext((securityContext) -> securityContext.disable())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .requestCache(requestCache -> requestCache
-                        .requestCache(cookieRequestCache));
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+//                .requestCache(requestCache -> requestCache
+//                        .requestCache(cookieRequestCache));
 
         // 토큰 관련 Filter 추가
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // /api/users/sign-in, /api/auth/refresh 제외 모든 경로

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import retrofit2.http.GET;
 
 //
 @RestController
@@ -21,6 +22,18 @@ public class UserApiController {
     private final UserService userService;
     private final UserSignUpService userSignUpService;
     private final UserInfoService userInfoService;
+
+    @GetMapping("/noAuth")
+    @ResponseBody
+    public ResponseEntity test(@CurrentUser User user) {
+        return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/test")
+    @ResponseBody
+    public ResponseEntity testEndpoint(@CurrentUser User user) {
+        return ResponseEntity.ok(user);
+    }
 
     // 회원가입 - 이메일 중복 확인
     @GetMapping("/check-email")
